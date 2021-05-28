@@ -2,7 +2,7 @@ version: '3'
 
 services:
   brevetsapp:
-    build: bevetsapp/
+    build: brevetsapp/
     # TODO: what's -u?
     command: python -u flask_brevets.py
     ports: 
@@ -25,8 +25,8 @@ services:
     build: website/
     command: python -u website.py
     ports:
-        "6002:5000"
+        - "6002:5000"
     depends_on:
         - restapi
   ourdb:
-    image: mongo: latest
+    image: mongo:latest
