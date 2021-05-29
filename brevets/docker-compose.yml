@@ -3,29 +3,27 @@ version: '3'
 services:
   brevetsapp:
     build: brevetsapp/
-    # TODO: what's -u?
     command: python -u flask_brevets.py
     ports: 
-        # TODO: why the ""?
-        - "6000:5000"
+        - "5422:5000"
     depends_on:
         - ourdb
     environment:
         MONGODB_HOSTNAME: ourdb
-#   restapi:
-#     build: ./api
-#     command: python -u api.py
-#     ports:
-#         - "6001:5000"
-#     depends_on: 
-#         - ourdb
-#     environment:
-#         MONGODB_HOSTMAME: ourdb
+  restapi:
+    build: ./api
+    command: python -u api.py
+    ports:
+        - "5423:5000"
+    depends_on: 
+        - ourdb
+    environment:
+        MONGODB_HOSTNAME: ourdb
 #   website:
 #     build: website/
 #     command: python -u website.py
 #     ports:
-#         - "6002:5000"
+#         - "5424:5000"
 #     depends_on:
 #         - restapi
   ourdb:
