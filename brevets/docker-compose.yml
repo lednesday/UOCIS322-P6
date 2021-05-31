@@ -10,6 +10,8 @@ services:
         - ourdb
     environment:
         MONGODB_HOSTNAME: ourdb
+    volumes:
+        - ./brevetsapp:/brevetsapp
   restapi:
     build: ./api
     command: python -u api.py
@@ -19,6 +21,8 @@ services:
         - ourdb
     environment:
         MONGODB_HOSTNAME: ourdb
+    volumes:
+        - ./api:/api
   website:
     build: website/
     command: python -u website.py
@@ -26,5 +30,7 @@ services:
         - "5424:5000"
     depends_on:
         - restapi
+    volumes:
+        - ./website:/website
   ourdb:
     image: mongo:latest

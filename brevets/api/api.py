@@ -1,6 +1,6 @@
 # Streaming Service
 
-from flask import Flask
+from flask import Flask, jsonify
 from flask_restful import Resource, Api
 from db_methods import Db
 import json
@@ -11,74 +11,60 @@ api = Api(app)
 # make a JSON element to return
 db = Db()
 
-""" ----- JSON ----- """
-
 
 class ListAll(Resource):
-    def get(self):
-        return jsonify(db.find_content({open_time: 1, close_time: 1, _id: 0}))
+    def get(self, dtype="json"):
+        if dtype == "json":
+            return jsonify(list(db.find_content({"open_time": 1, "close_time": 1, "_id": 0})))
+        elif dtype == "csv":
+            data_list = db.find_content(
+                list({"open_time": 1, "close_time": 1, "_id": 0}))
+            csv_string = str(data_list[0].keys()) + '\n'
+            for datum in data_list:
+                csv_string += str(time_pair.values()) + '\n'
+            prinf("csv_string: ", csv_string)
+            return csv_string
+        else:
+            return "something went wrong with the API"
 
 
 class ListOpenOnly(Resource):
-    def get(self):
-        return jsonify(db.find_content({open_time: 1, _id: 0}))
+    def get(self, dtype="json"):
+        if dtype == "json":
+            return jsonify(list(db.find_content({"open_time": 1, "_id": 0})))
+        elif dtype == "csv":
+            data_list = db.find_content(
+                list({"open_time": 1, "_id": 0}))
+            csv_string = str(data_list[0].keys()) + '\n'
+            for datum in data_list:
+                csv_string += str(time_pair.values()) + '\n'
+            prinf("csv_string: ", csv_string)
+            return csv_string
+        else:
+            return "something went wrong with the API"
 
 
 class ListCloseOnly(Resource):
-    def get(self):
-        return jsonify(db.find_content({close_time: 1, _id: 0}))
-
-
-""" ----- CSV ----- """
-
-
-class ListAllCSV(Resource):
-    def get(self):
-        json_data = db.find_content(
-            jsonify({open_time: 1, close_time: 1, _id: 0}))
-        json_parsed = json.loads(json_data)
-        csv_string = ""
-        header = 0
-        for (key, value) in json_parsed.items():
-            if header == 0:
-                csv_string += json_parsed
-
-        with open('/tmp/AllTimes.csv', 'w', newline='') as fp:
-            csvwriter = csv.writer(fp)
-            count = 0
-            for time_pair in time_pairs:
-                if count == 0:
-                    header = time_pair.keys()
-                    csvwriter.writerow(header)
-                    count += 1
-                csvwriter.writerow(time_pair.values())
-        return csv_string
-
-
-class ListOpenOnlyCSV(Resource):
-    def get(self):
-        json_data = db.find_content(jsonify({open_time: 1, _id: 0}))
-        json_parsed = json.loads(json_data)
-
-
-class ListCloseOnlyCSV(Resource):
-    def get(self):
-        json_data = db.find_content(jsonify({close_time: 1, _id: 0}))
-        json_parsed = json.loads(json_data)
+    def get(self, dtype="json"):
+        if dtype == "json":
+            return jsonify(list(db.find_content({"close_time": 1, "_id": 0})))
+        elif dtype == "csv":
+            data_list = db.find_content(
+                list({"close_time": 1, "_id": 0}))
+            csv_string = str(data_list[0].keys()) + '\n'
+            for datum in data_list:
+                csv_string += str(time_pair.values()) + '\n'
+            prinf("csv_string: ", csv_string)
+            return csv_string
+        else:
+            return "something went wrong with the API"
 
 
 # Create routes
 # Another way, without decorators
-api.add_resource(ListAll, '/listAll')
-api.add_resource(ListOpenOnly, '/listOpenOnly')
-api.add_resource(ListCloseOnly, '/listCloseOnly')
-api.add_resource(ListAll, '/listAll/json')
-api.add_resource(ListOpenOnly, '/listOpenOnly/json')
-api.add_resource(ListCloseOnly, '/listCloseOnly/json')
-
-api.add_resource(ListAllCSV, '/listAll/csv')
-api.add_resource(ListOpenOnlyCSV, '/listOpenOnly/csv')
-api.add_resource(ListCloseOnlyCSV, '/listCloseOnly/csv')
+api.add_resource(ListAll, '/listAll', '/listAll/<dtype>')
+api.add_resource(ListOpenOnly, '/listOpenOnly', '/listOpenOnly/<dtype>')
+api.add_resource(ListCloseOnly, '/listCloseOnly', '/listClose/Only/<dtype>')
 
 
 # Run the application
