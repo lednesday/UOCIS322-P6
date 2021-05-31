@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import requests
 
 
@@ -13,38 +13,29 @@ def home():
 
 @app.route('/listeverything')
 def listeverything():
-    r = requests.get('http://restapi:5000/listAll')
+    json_or_csv = request.args.get('format', "json", type=str)
+    num_lines = request.args.get('lines', -1, type=int)
+    r = requests.get(
+        f'http://restapi:5000/listAll/{json_or_csv}?top={num_lines}')
     return r.text
 
 
 @app.route('/listopen')
 def listopen():
-    r = requests.get('http://restapi:5000/listOpenOnly')
+    json_or_csv = request.args.get('format', "json", type=str)
+    num_lines = request.args.get('lines', -1, type=int)
+    r = requests.get(
+        f'http://restapi:5000/listOpenOnly/{json_or_csv}?top={num_lines}')
     return r.text
 
 
 @app.route('/listclose')
 def listclose():
-    r = requests.get('http://restapi:5000/listCloseOnly')
+    json_or_csv = request.args.get('format', "json", type=str)
+    num_lines = request.args.get('lines', -1, type=int)
+    r = requests.get(
+        f'http://restapi:5000/listCloseOnly/{json_or_csv}?top={num_lines}')
     return r.text
-
-
-# @app.route('/listeverythingcsv')
-# def listeverything():
-#     r = requests.get('http://restapi:5000/listAll/csv')
-#     return r.text
-
-
-# @app.route('/listopencsv')
-# def listeverything():
-#     r = requests.get('http://restapi:5000/listOpenOnly/csv')
-#     return r.text
-
-
-# @app.route('/listclosecsv')
-# def listeverything():
-#     r = requests.get('http://restapi:5000/listCloseOnly/csv')
-#     return r.text
 
 
 if __name__ == '__main__':

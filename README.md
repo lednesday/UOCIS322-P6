@@ -31,22 +31,18 @@ Navigate to the brevets directory.
 ### To use Docker Compose
 Make sure Docker Compose is installed on your machine (https://docs.docker.com/compose/install/)
 Build a Docker Compose image with docker-compose up --build -p [name of image] -d
-Open a browser and navigate to the address of your machine and the port indicated in the docker-compose file (default is 5000). Currently the docker-compose file has 5422 for the brevets time calculator, 5423 for the API, and 5424 for the consumer website.
+Open a browser and navigate to the address of your machine and the port indicated in the docker-compose file (default for each container is 5000). Currently the docker-compose file has 5422 for the brevets time calculator, 5423 for the API, and 5424 for the consumer website.
 To end the program, enter docker-compose down in your terminal. 
 
 
 ## Needed improvements / bugs
-Although the brevetsapp is functional, the API and the consumer website are not yet functional.
-* The API appears to return an empty list in all cases.
-* Returning the top k items hasn't been implement at all yet in the API.
-* The consumer website doesn't display any results.
-* Allowing the user to select the top k times hasn't been implemented at all yet.
-* The time calculator does very little error checking.
 
 The app would be better with a few improvements:
+* The time calculator does very little error checking.
 * Currently if a user changes the start time or brevet distance, already-existing controle opening and closing times do not change. The app will be better if there are event handlers for changes in these values that trigger an update to the opening and closing times for all existing controle distances that a user has entered.
 * Error response is very limited at this point. Input error checking (for permissable types and values) should be added to flask_brevets.py (specifically the _calc_times function) such that the results include a boolean indicator of success or failure, and if the method failed, a message indicating the reason. calc.html should be modified to display such error messages.
 * Currently the database only stores the controle information, but not the brevet distance or the start time of the event. These should also be stored.
+* api.py needs refactoring.
 
 
 ### Background on Brevets and Randonneuring

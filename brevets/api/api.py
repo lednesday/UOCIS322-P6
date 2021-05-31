@@ -1,6 +1,6 @@
 # Streaming Service
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_restful import Resource, Api
 from db_methods import Db
 import json
@@ -14,15 +14,18 @@ db = Db()
 
 class ListAll(Resource):
     def get(self, dtype="json"):
+        data_list = list(db.find_content(
+            projection={"open_time": 1, "close_time": 1, "_id": 0}))
+        num_lines = request.args.get('top', -1, type=int)
+        if num_lines < 0 or num_lines > len(data_list):
+            num_lines = len(data_list)
+        data_list = data_list[:num_lines]
         if dtype == "json":
-            return jsonify(list(db.find_content({"open_time": 1, "close_time": 1, "_id": 0})))
+            return jsonify(data_list)
         elif dtype == "csv":
-            data_list = db.find_content(
-                list({"open_time": 1, "close_time": 1, "_id": 0}))
-            csv_string = str(data_list[0].keys()) + '\n'
+            csv_string = ", ".join(list(data_list[0].keys())) + '\n'
             for datum in data_list:
-                csv_string += str(time_pair.values()) + '\n'
-            prinf("csv_string: ", csv_string)
+                csv_string += ", ".join(list(datum.values())) + '\n'
             return csv_string
         else:
             return "something went wrong with the API"
@@ -30,15 +33,18 @@ class ListAll(Resource):
 
 class ListOpenOnly(Resource):
     def get(self, dtype="json"):
+        data_list = list(db.find_content(
+            projection={"open_time": 1, "_id": 0}))
+        num_lines = request.args.get('top', -1, type=int)
+        if num_lines < 0 or num_lines > len(data_list):
+            num_lines = len(data_list)
+        data_list = data_list[:num_lines]
         if dtype == "json":
-            return jsonify(list(db.find_content({"open_time": 1, "_id": 0})))
+            return jsonify(data_list)
         elif dtype == "csv":
-            data_list = db.find_content(
-                list({"open_time": 1, "_id": 0}))
-            csv_string = str(data_list[0].keys()) + '\n'
+            csv_string = ", ".join(list(data_list[0].keys())) + '\n'
             for datum in data_list:
-                csv_string += str(time_pair.values()) + '\n'
-            prinf("csv_string: ", csv_string)
+                csv_string += ", ".join(list(datum.values())) + '\n'
             return csv_string
         else:
             return "something went wrong with the API"
@@ -46,15 +52,18 @@ class ListOpenOnly(Resource):
 
 class ListCloseOnly(Resource):
     def get(self, dtype="json"):
+        data_list = list(db.find_content(
+            projection={"close_time": 1, "_id": 0}))
+        num_lines = request.args.get('top', -1, type=int)
+        if num_lines < 0 or num_lines > len(data_list):
+            num_lines = len(data_list)
+        data_list = data_list[:num_lines]
         if dtype == "json":
-            return jsonify(list(db.find_content({"close_time": 1, "_id": 0})))
+            return jsonify(data_list)
         elif dtype == "csv":
-            data_list = db.find_content(
-                list({"close_time": 1, "_id": 0}))
-            csv_string = str(data_list[0].keys()) + '\n'
+            csv_string = ", ".join(list(data_list[0].keys())) + '\n'
             for datum in data_list:
-                csv_string += str(time_pair.values()) + '\n'
-            prinf("csv_string: ", csv_string)
+                csv_string += ", ".join(list(datum.values())) + '\n'
             return csv_string
         else:
             return "something went wrong with the API"
@@ -64,7 +73,7 @@ class ListCloseOnly(Resource):
 # Another way, without decorators
 api.add_resource(ListAll, '/listAll', '/listAll/<dtype>')
 api.add_resource(ListOpenOnly, '/listOpenOnly', '/listOpenOnly/<dtype>')
-api.add_resource(ListCloseOnly, '/listCloseOnly', '/listClose/Only/<dtype>')
+api.add_resource(ListCloseOnly, '/listCloseOnly', '/listCloseOnly/<dtype>')
 
 
 # Run the application

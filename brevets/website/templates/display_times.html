@@ -22,24 +22,38 @@
          <p>You can display all the opening and closing times, or just opening or just closing. Yay.</p>
         <form class="preferences">
             <div class="time_selection">
-                <p>Select the times you want</p>
+                <h3>Select the times you want</h3>
                 <input type="radio" id="all" name="times" value="all" checked="checked">
-                <label for="all">All opening and closing times</label><br>
+                <label for="all">Both opening and closing times</label><br>
                 <input type="radio" id="opening" name="times" value="opening">
-                <label for="opening">All opening times</label><br>
+                <label for="opening">Only opening times</label><br>
                 <input type="radio" id="closing" name="times" value="closing">
-                <label for="closing">All closing times</label>
+                <label for="closing">Only closing times</label>
             </div>
             <div class="format_selection">
-                <p>Select the format</p>
+                <h3>Select the format</h3>
                 <input type="radio" id="json" name="format" value="json" checked="checked">
                 <label for="json">JSON format</label><br>
                 <input type="radio" id="csv" name="format" value="csv">
                 <label for="csv">CSV format</label><br>
             </div>
+            <div class="num_selection">
+                <h3>Enter the number of controles</h3>
+                <input name="lines" type="number" step="1"
+                           min="0" max="1200" value="1"/>
+                <p>If you enter more than the total available, all lines will be shown.</p>
+                <div class="all">
+                    <p>Or check the box to receive all controles:</p>
+                    <input type="checkbox" id="all" name="all" unchecked>
+                    <label for="all">All controles</label>
+                </div>
+            </div>
+            <p class="blankline"></p>
             <button id="submit">Submit</button>
         </form>
         <div class="display_times">
+            <h3>Results:</h3>
+            <code id="display_here"></code>
         </div>
          
          <script type="text/javascript">
@@ -47,9 +61,6 @@
             var BOTH_URL = SCRIPT_ROOT + "/listeverything";
             var OPEN_URL = SCRIPT_ROOT + "/listopen";
             var CLOSE_URL = SCRIPT_ROOT + "/listclose";
-            var BOTH_CSV_URL = SCRIPT_ROOT + "/listeverythingcsv";
-            var OPEN_CSV_URL = SCRIPT_ROOT + "/listopencsv";
-            var CLOSE_CSV_URL = SCRIPT_ROOT + "/listclosecsv";
 
             $(document).ready(function(){
                 // handler for submit button
@@ -57,22 +68,31 @@
                     function(e){
                         e.preventDefault();
                         var timesValue = $("input[name='times']:checked").val();
-                        var formatValue = $("input[name='format]:checked").val();
+                        var formatValue = $("input[name='format']:checked").val();
+                        var numLines = $("input[name='lines']").val();
+                        if($("input[name='all']").is(":checked")){
+                            console.log("box is checked");
+                            numLines = -1; // symbol for "all"
+                            console.log("numLines: ", numLines);
+                        }
                         var url_str = "";
-                        if(formatValue == "csv"){
-                            if(timesValue == "opening"){url_str = OPEN_CSV_URL;}
-                            else if(timesValue == "closing"){url_str = CLOSE_CSV_URL;}
-                            else{url_str = BOTH_CSV_URL;}
+                        if(timesValue == "opening"){url_str = OPEN_URL;}
+                        else if(timesValue == "closing"){url_str = CLOSE_URL;}
+                        else{url_str = BOTH_URL;}
+                        $.get(url_str, {"format": formatValue, "lines":numLines}, function(api_data){
+                            console.log("api_data:", api_data);
+                            console.log($("#display_here"));
+                            $("#display_here").html(api_data);
+                        });
+                    });
+                $('input[name="all"]').change(
+                    function(e){
+                        if($(this).is(":checked")){
+                            $('input[name="lines"]').hide();
                         }
                         else{
-                            if(timesValue == "opening"){url_str = OPEN_URL;}
-                            else if(timesValue == "closing"){url_str = CLOSE_URL;}
-                            else{url_str = BOTH_URL;}
+                            $('input[name="lines"]').show();
                         }
-                        $.getJSON(url_str, {}, function(api_data){
-                            console.log("api_data:", api_data);
-                            $(".display_times").val(api_data);
-                        });
                     });
                 });
          </script>
