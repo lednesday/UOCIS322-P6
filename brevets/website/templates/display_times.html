@@ -71,17 +71,13 @@
                         var formatValue = $("input[name='format']:checked").val();
                         var numLines = $("input[name='lines']").val();
                         if($("input[name='all']").is(":checked")){
-                            console.log("box is checked");
                             numLines = -1; // symbol for "all"
-                            console.log("numLines: ", numLines);
                         }
                         var url_str = "";
                         if(timesValue == "opening"){url_str = OPEN_URL;}
                         else if(timesValue == "closing"){url_str = CLOSE_URL;}
                         else{url_str = BOTH_URL;}
                         $.get(url_str, {"format": formatValue, "lines":numLines}, function(api_data){
-                            console.log("api_data:", api_data);
-                            console.log($("#display_here"));
                             $("#display_here").html(api_data);
                         });
                     });

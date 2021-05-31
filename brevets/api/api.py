@@ -23,10 +23,13 @@ class ListAll(Resource):
         if dtype == "json":
             return jsonify(data_list)
         elif dtype == "csv":
-            csv_string = ", ".join(list(data_list[0].keys())) + '\n'
-            for datum in data_list:
-                csv_string += ", ".join(list(datum.values())) + '\n'
-            return csv_string
+            if len(data_list) > 0:
+                csv_string = ", ".join(list(data_list[0].keys())) + '\n'
+                for datum in data_list:
+                    csv_string += ", ".join(list(datum.values())) + '\n'
+                return csv_string
+            else:
+                return ""
         else:
             return "something went wrong with the API"
 
@@ -42,10 +45,13 @@ class ListOpenOnly(Resource):
         if dtype == "json":
             return jsonify(data_list)
         elif dtype == "csv":
-            csv_string = ", ".join(list(data_list[0].keys())) + '\n'
-            for datum in data_list:
-                csv_string += ", ".join(list(datum.values())) + '\n'
-            return csv_string
+            if len(data_list) > 0:
+                csv_string = ", ".join(list(data_list[0].keys())) + '\n'
+                for datum in data_list:
+                    csv_string += ", ".join(list(datum.values())) + '\n'
+                return csv_string
+            else:
+                return ""
         else:
             return "something went wrong with the API"
 
@@ -61,10 +67,13 @@ class ListCloseOnly(Resource):
         if dtype == "json":
             return jsonify(data_list)
         elif dtype == "csv":
-            csv_string = ", ".join(list(data_list[0].keys())) + '\n'
-            for datum in data_list:
-                csv_string += ", ".join(list(datum.values())) + '\n'
-            return csv_string
+            if len(data_list) > 0:
+                csv_string = ", ".join(list(data_list[0].keys())) + '\n'
+                for datum in data_list:
+                    csv_string += ", ".join(list(datum.values())) + '\n'
+                return csv_string
+            else:
+                return ""
         else:
             return "something went wrong with the API"
 
